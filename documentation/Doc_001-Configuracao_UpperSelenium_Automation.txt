@@ -1,0 +1,44 @@
+     __    __  _____   _____    _____   ______        _______   _____  
+    |  |  |  ||   _ \ |   _ \  / ___ \ |   _  \   _  /  _____] / ___ \ 
+    |  |  |  ||  |_) )|  |_) )| |___) )|  |_)  ) (_) \____  \ | |___) )
+    |  |__|  ||  ___/ |  ___/ |  ____/ |  _   /      _____)  )|  ____/ 
+     \______/ |__|    |__|     \_____\ |__|\__\      [______/  \_____\ 
+
+       Developed by: Hudson S. S. Rosa
+
+             :::::::::::::::::::::::::::::::::::::::::::::::::::::
+             :::::::::: RECOMENDAÇÕES - CONFIGURAÇÃO :::::::::::::
+             :::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+Para utilizar o framework de automação UpperSelenium é necessário realizar os seguintes passos:
+
+1 - Instalar Java na máquina local, de preferência uma versão do JDK 1.7, bem como o JRE 7.
+2 - Instalar/descompactar o Maven 3.3 no C:\
+3 - Inserir as variáveis JAVA_HOME e MAVEN_HOME, tendo como valor os seus respectivos diretórios. Por exemplo:
+	3.1 - JAVA_HOME  ---> C:\Program Files\Java\jdk1.7.0_79
+	3.2 - MAVEN_HOME ---> C:\apache-maven-3.5.4\bin
+	3.3 - PATH       ---> %JAVA_HOME%\bin; %MVN_HOME%
+4 - Verificar no CMD se o Java, o Javac e o Maven estão sendo reconhecidos com sucesso pelo SO, de acordo com as variáveis inseridas no Path do Windows.
+5 - Copiar para o diretório C:\ a pasta que constitui todos os Webdrivers utilizados pelo projeto do framework de automação. Esta pasta deverá apresentar a seguinte estrutura:
+	5.1 - C:\webdrivers_for_automation
+6 - Instalar o Git Bash ou GitIDE para utilizar o projeto, caso esteja versionado em repositório remoto.
+7 - Baixar o projeto para um repositório local próprio. Caso contrário, utilizar o projeto copiado em "ProjetosGit/upperselenium-automation".
+8 - Importar o projeto Maven do framework de automação na workspace do Eclipse IDE (utilizar as versões recentes que são mais consistentes).
+9 - Sempre que alterar algum código do projeto, é necessário garantir que o projeto esteja compilável e com as dependências do Maven sempre atualizadas. Para isso, antes de executar 
+os testes realizar os seguintes passos:
+    9.1 - No Eclipse, clicar com o botão direito sobre o projeto importado. No menu de contexto ir até "Run As > Maven Build..."
+    9.2 - Uma janela irá se abrir. No campo "Goals" digitar 'clean -U install' (sem aspas) e marcar 'Skip Tests'.
+    9.3	- Em seguida, clicar em "Run".
+10 - Ainda no Eclipse, certificar-se de que a JDK instalada está sendo utilizada pela IDE. Para isto, vá em: Window > Preferences > Java > Installed JREs.
+    10.1 - Clique em "Add" > "Next" > "Directory" e busque a pasta do Java em "Program Files".
+    10.2 - Clique em "Finish".
+    10.3 - Se a biblioteca inteira do Java aparecer na grid tela, o procedimento está correto.
+    10.4 - Para testar se o Maven está funcionando, basta clicar novamente com o botão direito sobre o projeto e ir até "Run As > Maven Build..."
+    10.5 - Após a janela se abrir, no campo "Goals" digitar 'clean -U test' (sem aspas) e aguardar o build. (Não deverá ocorrer problemas e o build deverá terminar com sucesso).
+11 - Na pasta "installation", utilizar o arquivo "bpep_1.0.0.SNAPSHOT.jar" e inserí-lo no diretório "Eclipse/Dropins".
+	11.1 - Com botão direito no editor do Eclipse, selecione 'Source -> Generate Builder Pattern Code'. 
+12 - Pronto! O projeto está pronto para ser utilizado. Clique com o botão direito na classe "SuiteExecutor.java" e execute-a.
+
+Obs.: Se todos os passos anteriores foram configurados com sucesso, o JUnit irá abrir o navegador para executar o teste, conforme o browser definido no arquivo "config_browser.properties" do projeto. 
+(Atualmente, é garantido o funcionamento do Chrome, Firefox e PhantomJS).
+

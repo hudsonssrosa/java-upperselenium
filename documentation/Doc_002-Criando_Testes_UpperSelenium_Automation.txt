@@ -1,0 +1,196 @@
+     __    __  _____   _____    _____   ______        _______   _____  
+    |  |  |  ||   _ \ |   _ \  / ___ \ |   _  \   _  /  _____] / ___ \ 
+    |  |  |  ||  |_) )|  |_) )| |___) )|  |_)  ) (_) \____  \ | |___) )
+    |  |__|  ||  ___/ |  ___/ |  ____/ |  _   /      _____)  )|  ____/ 
+     \______/ |__|    |__|     \_____\ |__|\__\      [______/  \_____\ 
+
+       Developed by: Hudson S. S. Rosa
+
+   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+   :::::::::: RECOMENDAÇÕES - IMPLEMENTAÇÃO DE TESTES AUTOMATIZADOS:::::::::::::
+   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+Antes de criar um cenário de teste, certifique-se de que o projeto funciona corretamente e que tenha realizado todas as configurações descritas no documento: 
+	"Doc_001-Configuracao_UpperSe_Automation.txt"
+
+Considerar na implementação dos testes a sequência mais adequada, a seguir.
+
+1 - PAGE OBJECT - MAPEAMENTO ELEMENTOS HTML DE UMA PÁGINA WEB, UTILIZANDO XPATHS
+	1.1 - Criar uma nova classe que irá conter todos os objetos que associam os	IDs ou XPaths de elementos de tela e que serão
+	imprescindíveis para teste (campos de formulário, botões e links).
+	1.2 - A classe deverá ser nomeada com a terminação "...Page.java" para garantir a organização do projeto e deverá estar localizada em: 
+			"br.com.upperselenium\test\stage\<nome_da_funcionalidade>\page\ExemploPage.java".
+	1.3 - A classe da Page deverá estender sempre a "BasePage.java"
+	1.4 - Deve ser adotado o mapeamento utilizando-se a cópia de Xpaths dos elementos no navegador e atribuí-los às suas constantes de tipo String,
+	declaradas como, por exemplo: 
+			"private static final String TEXT_USUARIO = "//*[@id='UserName']";"
+	1.5 - Invocar na Page Object atual os métodos de preenchimento, clique, seleção de listas, caixas de seleção, ações nas grids, etc., de acordo com o 
+	tipo de elemento mapeado. Todas essas ações devem estar implementadas de acordo com os comportamentos dos componentes da aplicação a ser testada, 
+	dentro da "BasePage.java":
+			--> typeTextField(String xpath, String value);
+			--> typeTextAutoCompleteField(String xpath, String value);
+			--> typeSelectComboOptionByValue(String xpath, String value);
+			--> typeSelectComboOptionByIndex(String xpath, int index);
+			--> typeSelectComboOptionByText(String xpath, String value);
+			--> typeDatePickerDefault(String xpath, String value);
+			--> typeRadioListOption(String xpath, String value);
+			--> typeCheckOptionDefault(String xpath, String value);
+			--> typeCheckOptionByLabel(String xpath, String value);
+			--> clickOnElement(String xpath);
+			--> useKey(String xpath, Keys key);		
+			--> typeGridTextField(String xpath, String value, int index);
+			--> typeGridSelectComboOptionByText(String xpath, String value, int index);
+			--> typeGridRadioListOption(String xpath, String value, int index);
+			--> typeGridCheckOption(String xpath, String value, int index);
+			--> typeGridCheckFirstFilteredItem(String xpath, String value, int index);
+			--> clickGridButtonOnElement(String xpath, String value, int index);
+			--> typeGroupCheckOption(String xpath, String value, int index);
+	 	
+2 - JSON DATA PROVIDER (DP) - MASSA DE DADOS PARA TESTE EM FORMATO JSON
+	2.1 - Criar os arquivos JSon que irão compor os dados a serem preenchidos na tela correspondente em: 
+			"src\main\resources\dataprovider\<nome_da_funcionalidade>\ExemploDP.json"
+	2.2 - Os arquivos JSon deverão ser nomeados com a terminação "...DP.json", de modo a identificá-lo com um Data Provider.
+	
+3 - DATA PROVIDER OBJECT(DPO) - CLASSE PARA PROVIMENTO DE DADOS
+	3.1 - Criar a classe java que fará a transferência dos dados de arquivos JSon para um objeto. 
+	3.2 - A classe deverá ser nomeada com a terminação "...DPO.java" e estar localizada em:			 
+			"br.com.upperselenium\test\stage\dpo\<nome_da_funcionalidade>\ExemploDPO.java"
+	3.3 - Deverá conter basicamente o construtor, os métodos get e set e o método toString(), referentes aos seus atributos. É possível inserí-los através de 
+	atalhos da IDE (Eclipse).
+	
+4 - STAGE - ABSTRAÇÃO SEMÂNTICA DAS INTERAÇÕES SOBRE A APLICAÇÃO
+	4.1 - Criar a classe que será base para realizar a automação das ações na tela da aplicação. Esta classe poderá compor de uma ou mais Pages instanciadas, 
+	bem como da associação entre os DPOs e seus respectivos arquivos JSon (DPs).
+	4.2 - A classe deverá ser nomeada com a terminação "...Stage.java" e estar localizada em:
+			"br.com.upperselenium\test\stage\<nome_da_funcionalidade>\ExemploStage.java".
+	4.3 - A classe da Stage deverá estender sempre a "BaseStage.java", a qual irá "obrigar" a implementação de 3 métodos principais:
+			
+			@Override
+			public void initMappedPages() {}
+			
+			@Override
+			public void runStage() {}
+			
+			@Override
+			public void runValidations() {}
+			
+	4.4 - O construtor da classe deverá ser criado para recuperar os arquivos Json passados por parâmetro via classe Flow (dpExemplo - será explicado 
+	posteriormente em 5.7). 
+	
+	Exemplo:				
+			public ExemploStage(String dpExemplo, String dpExemploHome) {
+				dpExemploDPO = loadDataProviderFile(exemploDPO.class, dpExemplo);
+				exemploHomeDPO = loadDataProviderFile(exemploHomeDPO.class, dpExemploHome);
+			}
+			
+	4.5 - É obrigatória a implementação do método void "initMappedPages()" para que a Pages declaradas na Stage sejam reconhecidas e
+	suas instâncias tenham os elementos disponíveis para uso da Stage. 
+	
+	Exemplo:
+			@Override
+			public void initMappedPages() {
+				exemploPage = initElementsFromPage(ExemploPage.class);			
+			}			
+			
+	4.6 - No método "runStage()", todas as demais interações com o uso das PageObjects deverão estar declaradas. É neste método que serão reunidos todos os 
+	comportamentos a serem realizados pelo Selenium em uma parte da aplicação. Métodos de espera por um elemento, preenchimento, cliques, e outros, 
+	deverão estar organizados conforme as ações que seriam executadas cronologicamente por um usuário humano.
+	
+	Exemplo:
+	        @Override
+			public void runStage() {
+				waitForPageToLoad(TimeWaitPRM._10_SECS);
+				exemploPage.typeNomeUsuario(exemploDPO.getNomeUsuario());
+				exemploPage.typeSenhaUsuario(exemploDPO.getSenhaUsuario());
+				exemploPage.clickLogarUsuario();				
+			}
+			
+	4.7 - Da mesma forma que o "runStage()", o método "runValidations()" também deverá ser implementado, porém, somente quando a stage realizar
+	validações sobre os elementos de tela. De maneira geral, duas variáveis deverão ser criadas para que a validação seja realizada através do
+	Assert. Sobre a variável "expectedElementInformation", deverá ser inferido o atributo do DPO (que contém dados dos arquivos "**DP.json") 
+	correspondente ao elemento que se espera a informação. Já para a variável "actualElementInformation", deverá ser inferida a informação 
+	obtida do elemento interagido pela Page. Ambas as informações são validadas pela classe org.junit.Assert, cujo framework UpperSe realiza um 
+	tratamento através da classe AssertUtil.
+	
+	Exemplo: 	
+			@Override
+			public void runValidations() {
+				String expectedUsuarioLogado = exemploHomeDPO.getNomeUsuarioLogado();
+				String actualUsuarioLogado = exemploHomePage.getNomeUsuarioValidation().getText();
+				AssertUtil.assertEquals(expectedUsuarioLogado, actualUsuarioLogado);	
+			}
+	
+5 - FLOW - FORMAÇÃO DO FLUXO DO TESTE
+	5.1 - Criar a classe que irá reunir todas as Stages que funcionarão em conjunto para representar o produto do caso de teste como um todo.
+	Este produto de teste é denominado Flow.
+	5.2 - A classe deverá ser nomeada com a terminação "...Flow.java" e estar localizada em:
+			"br.com.upperselenium\test\flow\...\ExemploFlow.java".
+	5.3 - Deverá existir a anotação com o nome da própria classe como parâmetro: 
+			"@SuiteClasses(ExemploFlow.class)". 
+	Através desta anotação, o fluxo de teste será invocado pela classe da suite, posteriormente.
+	5.4 - Deverá existir a anotação "@FlowParams" que irá compor o ID do teste (idTest), o diretório dos Data Providers das stages e login 
+	(testDirPath e loginDirPath), o objetivo do teste (goal) e a classe da Suite (suiteClass) a qual o Flow pertencerá. Isto será de grande 
+	importância para execução e geração das Evidências do teste. Um ponto de atenção é a criação de constantes para definir os diretórios 
+	principais dos arquivos "**DP.json" utilizados nas diversas Stages do teste. Utilizar, neste caso, a classe de "DPConstant.java" para 
+	melhor organização do código.
+	
+	exemplo:
+			@FlowParams(idTest = "T0001_Exemplo",
+			testDirPath = DPConstant.Path.FINDBUGS + "testcase001",
+			loginDirPath = DPConstant.Path.FINDBUGS + "reusablestages",
+			goal = "Registra o usuário com sucesso caso não exista e realiza o login através deste.",
+			suiteClass = UserFindBugsAzureWebSuite.class)
+				
+	5.5 - A classe do Flow deverá estender sempre a "FlowBase.java".			
+	5.6 - Dentro do método "addFlowStages()", implementar a chamada de todas as Stages que o caso de teste irá 'executar'. Cada Stage invocada 
+	terá o(s) path(s) do(s) DP(s) JSon declarado(s) anteriormente. Para tanto, uma Stage poderá receber por parâmetro quantos DPs forem 
+	necessários. É a partir deste que o construtor da Stage (vide item 4.4) irá recuperar os dados necessários para associá-los aos seus respectivos DPOs.
+	Para inferência do nome dos arquivos "**DP.json" em um atributo do Flow, é necessário o uso dos métodos "getLoginDPFileName(String dpFileName)" e 
+	"getDPFileName(String dpFileName)". Deste modo, toda a concatenação do nome aos diretórios declados via anotação @FlowParams serão validados e realizados
+	automaticamente. 
+	
+	Exemplo:			
+			private String dpLoginExemplo = getLoginDPFileName("LoadAppDP");
+			private String dpExemploHome = getDPFileName("ExemploHomeDP");
+	
+			@Override
+			protected void addFlowStages() {
+				addStage(new ExemploStage(dpLoginExemplo, dpExemploHome));
+				//... Podem ser inseridas novas stages aqui
+			}
+	
+	Obs. 1: Serão aceitas e tratadas adequadamente pelos métodos "getLoginDPFileName()" ou getDPFileName() nomes dos DPs com ou sem o formato do arquivo. 
+		Ex.: "LoadAppDP.json", "LoadAppDP". 
+	Obs. 2: Da mesma forma, a anotação com parâmetros "testDirPath" e "loginDirPath" aceitam com ou sem a barra "/"	na especificação da última pasta do diretório. 
+	Ex.: testDirPath = DPConstant.Path.FINDBUGS + "testcase001", testDirPath = DPConstant.Path.FINDBUGS + "testcase001/".
+	
+6 - SUITE - ORGANIZANDO OS FLOW TESTS EM SUITES
+	6.1 - Criar a classe que irá reunir todos os Flows que possuam características de cenários de teste semelhantes.
+	6.2 - A classe deverá ser nomeada com a terminação "...Suite.java" e estar localizada em:
+			"br.com.upperselenium\test\suite\ExemploSuite.java".
+	6.3 - A classe da Suite deverá estender sempre a "BaseSuite.java".
+	6.4 - A estrutura básica compõe da anotação "@SuiteClasses ({...})" que poderá conter um ou mais fluxos de teste (TestCases), bem como
+	a anotação "@SuiteParams" para descrever as características da Suite (serão exibidas nas Evidências do teste).
+	
+				@RunWith(Suite.class)
+			
+				@SuiteClasses({
+					T0055ExemploFlow.class,
+					T0056ExemploExclusaoUsuarioFlow.class,
+					T0057ExemploNovoUsuarioFlow.class,
+					T0058ExemploSmokeTesteFlow.class
+					})
+				@SuiteParams(description="Testes de exemplo sobre o UpperSe - versão 01.00.00")
+				public class ExemploUsuarioSuite extends SuiteBase {}
+
+7 - EXECUÇÃO DA SUITE DE TESTES
+	7.1 - Para executar a Suite, insira o arquivo da seguinte maneira dentro "SuiteExecutor.java".
+	7.2 - O tipo de navegador poderá ser alterado fornecendo-se os nomes no arquivo "testconfig.properties".
+	7.3 - Os relatórios de Evidências serão gerados ao final da execução do SuiteExecutor. Para isto, uma pasta será criada automaticamente com o
+	nome "report" e, em seu interior, deverão existir os arquivos "SuiteTestlog.log", "SuiteTestlogWeb.html" e o principal arquivo de evidências 
+	"SuiteReport_dd-MM-yyyy_at_HH-mm-ss.html", que contém todo o detalhamento das stages de cada flow e status com representação gráfica dos testes.
+	7.4 - Caso seja necessário excluir todos os reports a cada execução da Suite de testes, basta inserir o valor "true" no arquivo
+	"testconfig.properties". Caso contrário, os SuiteReports serão criados acumuladamente, com nome contendo data e hora da execução. 
+	 
+	 
+	

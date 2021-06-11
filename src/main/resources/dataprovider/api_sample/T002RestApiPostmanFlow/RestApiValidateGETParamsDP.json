@@ -1,0 +1,19 @@
+{
+	"uri": "https://postman-echo.com/get",
+	"valueHost": "postman-echo.com",
+	"valueXForwardedProto": "https",
+	"status": "200",
+	"params":
+		[
+			{
+				"key": "foo1",
+				"value": "bar1",
+				"valueExpected": "bar1" 
+			},
+			{
+				"key": "foo2",
+				"value": "bar2",
+				"valueExpected": "bar2" 
+			}
+		]
+}

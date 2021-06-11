@@ -1,0 +1,17 @@
+{
+	"uri": "https://postman-echo.com/post",
+	"status": "200",
+	"params":
+		[
+			{
+				"key": "foo1",
+				"value": "bar12345",
+				"valueExpected": "" 
+			},
+			{
+				"key": "foo2",
+				"value": "bar54321",
+				"valueExpected": "" 
+			}
+		]
+}
